@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Capsule</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
+        :root {
+            --primary-color: #ffd100;
+            --secondary-color: #ff9e00;
+            --background-color: #fffbe6;
+            --text-color: #333;
+            --accent-color: #ff6b6b;
+        }
+
+        body {
+            font-family: 'Audiowide', cursive;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        label.required::after {
+            content: " *";
+            color: var(--accent-color);
+        }
+
+        input[type="email"],
+        input[type="datetime-local"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            font-family: 'Audiowide', cursive;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="datetime-local"]:focus,
+        textarea:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-family: 'Audiowide', cursive;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        canvas {
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            color: var(--secondary-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--accent-color);
+        }
+
+        #capture-img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .time-capsule-icon {
+            display: block;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .passing-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.7;
+            animation: pass 15s linear infinite;
+        }
+
+        @keyframes pass {
+            0% {
+                transform: translateX(-100%) translateY(0);
+            }
+            100% {
+                transform: translateX(100vw) translateY(-100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg class="time-capsule-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4L8 2H16L20 4V20L16 22H8L4 20V4Z" stroke="#ff9e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 2V22" stroke="#ff9e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 10H20" stroke="#ff9e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 16H20" stroke="#ff9e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+        <h1>Time Capsule</h1>
+        
+        <form action="/submit" method="POST" enctype="multipart/form-data">
+            <label for="email" class="required">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="links">Links to save:</label>
+            <textarea id="links" name="links" rows="4"></textarea>
+
+            <label for="camera">Take a picture using your camera:</label>
+            <video id="video" autoplay></video>
+            <button type="button" onclick="takeSnapshot()">Capture Image</button>
+
+            <canvas id="canvas"></canvas>
+
+            <label for="files">Upload files:</label>
+            <input type="file" id="files" name="files" multiple>
+
+            <label for="schedule_time" class="required">When to send:</label>
+            <input type="datetime-local" id="schedule_time" name="schedule_time" required>
+
+            <input type="hidden" id="image_data" name="image_data">
+            <button type="submit">Create Time Capsule</button>
+        </form>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Verify Captured Image</h2>
+            <img id="capture-img" src="" alt="Captured Image">
+            <div class="btn-group">
+                <button id="confirmBtn" type="button" onclick="confirmImage()">Confirm Image</button>
+                <button id="retakeBtn" type="button" onclick="retakeImage()">Retake Image</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const modal = document.getElementById("imageModal");
+        const imgElement = document.getElementById("capture-img");
+        const closeModal = document.getElementsByClassName("close")[0];
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                alert("Could not access webcam: " + err);
+            });
+
+        function takeSnapshot() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL('image/png');
+            document.getElementById('image_data').value = imageData;
+
+            imgElement.src = imageData;
+            modal.style.display = "block";
+        }
+
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function confirmImage() {
+            modal.style.display = "none";
+            alert("Image confirmed!");
+        }
+
+        function retakeImage() {
+            modal.style.display = "none";
+            takeSnapshot();
+        }
+
+        // Add passing elements
+        function createPassingElement() {
+            const element = document.createElement('div');
+            element.classList.add('passing-element');
+            element.style.left = Math.random() * window.innerWidth + 'px';
+            element.style.top = Math.random() * window.innerHeight + 'px';
+            element.innerHTML = '&#128340;'; // Clock emoji
+            element.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            document.body.appendChild(element);
+
+            setTimeout(() => {
+                element.remove();
+            }, 15000);
+        }
+
+        setInterval(createPassingElement, 2000);
+    </script>
+</body>
+</html>
+
